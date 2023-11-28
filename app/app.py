@@ -25,7 +25,7 @@ class App:
         if catalog_name is None:
           return Printer.warn('Catalog name is not provided.')
 
-        catalog = self.storage.open(catalog_name)
+        (catalog, msg) = self.storage.open(catalog_name)
 
         if catalog is None:
           Printer.warn(f'Catalog {Style.BLUE}{catalog_name}{Style.WHITE} is broken. Erase it and create new? (Y/N)')
@@ -33,8 +33,10 @@ class App:
             return
           
           self.storage.delete(catalog_name)
-          catalog = self.storage.open(catalog_name)
+          (catalog, _) = self.storage.open(catalog_name)
           Printer.info(f'Recreated catalog {Style.BLUE}{catalog_name}{Style.WHITE}.')
+        
+        Printer.info(msg)
 
         self.catalog.catalog = catalog
       case 'l':
@@ -43,8 +45,22 @@ class App:
         if len(catalogs) == 0:
           return Printer.info('No catalogs found.')
 
-        for catalog in catalogs:
-          print(f'- {Style.BLUE}{catalog}{Style.WHITE}\n')
+        return Printer.list(catalogs)
+      case 'v':
+        catalog_names = self.storage.list()
+        if len(catalog_names) == 0:
+          return Printer.info("No catalogs found.")
+
+        catalogs = {}
+
+        for catalog in catalog_names:
+          (catalog_data, _) = self.storage.open(catalog)
+          if catalog_data is None:
+            continue
+
+          catalogs[catalog_data.name] = catalog_data.topics.keys()
+        
+        Printer.table(catalogs)
       case 'd':
         if catalog_name is None:
           return Printer.warn('Catalog name is not provided.')

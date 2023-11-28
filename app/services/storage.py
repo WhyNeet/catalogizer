@@ -28,17 +28,17 @@ class StorageService:
 
     f.write(str(catalog))
 
-  def open(self, catalog_name: str) -> Catalog | None:
+  def open(self, catalog_name: str) -> (Catalog | None, str):
     path = self.__make_catalog_path(catalog_name)
 
     if not os.path.exists(path):
       catalog = Catalog(catalog_name)
       self.store(catalog)
-      return catalog
+      return (catalog, f'Created catalog "{catalog_name}".')
     
     data = open(path, 'r')
     
-    return Catalog.deserialize(data.read(), catalog_name)
+    return (Catalog.deserialize(data.read(), catalog_name), f'Opened catalog "{catalog_name}".')
   
   def delete(self, catalog_name: str) -> str:
     path = self.__make_catalog_path(catalog_name)

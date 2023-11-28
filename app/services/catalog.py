@@ -40,6 +40,11 @@ class CatalogService:
           return Printer.list(self.catalog.topics)
 
         Printer.info("No topics found.")
+      case 'v':
+        if len(self.catalog.topics) == 0:
+          return Printer.info("No topics found.")
+
+        return Printer.table(self.catalog.topics)
       case 'd':
         if topic_name is None:
           return Printer.warn("Topic name is not provided.")
@@ -78,5 +83,3 @@ class CatalogService:
         return
     
     self.storage.store(self.catalog)
-      
-    
