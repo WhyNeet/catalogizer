@@ -13,10 +13,13 @@ class Prompt:
     action_input = Prompt.prompt(path).split(' ', 1)
     if len(action_input) == 0:
       return Printer.info('Action is not provided. Usage: <action> <argument>')
-    
+
     if len(action_input) == 1:
       return (action_input[0].lower(), None)
     else:
+      action_input[1] = action_input[1].strip()
+      if len(action_input[1]) == 0:
+        return (action_input[0].lower(), None)
       return (action_input[0].lower(), action_input[1])
 
   def choice(path: str) -> bool | None:

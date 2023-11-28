@@ -18,23 +18,23 @@ class App:
 
     Printer.guide(catalog_select_guide)
 
-    (action, catalog_name) = Prompt.action('')
+    (action, argument) = Prompt.action('')
 
     match action:
       case 's':
-        if catalog_name is None:
+        if argument is None:
           return Printer.warn('Catalog name is not provided.')
 
-        (catalog, msg) = self.storage.open(catalog_name)
+        (catalog, msg) = self.storage.open(argument)
 
         if catalog is None:
-          Printer.warn(f'Catalog {Style.BLUE}{catalog_name}{Style.WHITE} is broken. Erase it and create new? (Y/N)')
+          Printer.warn(f'Catalog {Style.BLUE}{argument}{Style.WHITE} is broken. Erase it and create new? (Y/N)')
           if not Prompt.choice():
             return
           
-          self.storage.delete(catalog_name)
-          (catalog, _) = self.storage.open(catalog_name)
-          Printer.info(f'Recreated catalog {Style.BLUE}{catalog_name}{Style.WHITE}.')
+          self.storage.delete(argument)
+          (catalog, _) = self.storage.open(argument)
+          Printer.info(f'Recreated catalog {Style.BLUE}{argument}{Style.WHITE}.')
         
         Printer.info(msg)
 
@@ -58,14 +58,44 @@ class App:
           if catalog_data is None:
             continue
 
-          catalogs[catalog_data.name] = catalog_data.topics.keys()
+          catalogs[catalog_data.name] = catalog_data.topics
         
-        Printer.table(catalogs)
+        if len(catalogs) == 0:
+          return Printer.info("No catalogs found.")
+
+        return Printer.table(catalogs)
+      case 'f':
+        if argument is None:
+          return Printer.info('No search query provided.')
+        
+        catalog_names = self.storage.list()
+        if len(catalog_names) == 0:
+          return Printer.info("No catalogs found.")
+        
+        catalogs = {}
+
+        for catalog in catalog_names:
+          (catalog_data, _) = self.storage.open(catalog)
+          for topic in catalog_data.topics:
+            topic_vals = []
+            for value in catalog_data.topics[topic]:
+              query_idx = value.find(argument)
+              if query_idx > -1:
+                topic_vals.append(value)
+            if len(topic_vals) != 0:
+              catalogs[f'{catalog}:{topic}'] = topic_vals
+        
+        if len(catalogs) == 0:
+          return Printer.info('No results.')
+        
+        print(catalogs)
+
+        return Printer.table(catalogs)
       case 'd':
-        if catalog_name is None:
+        if argument is None:
           return Printer.warn('Catalog name is not provided.')
 
-        Printer.info(self.storage.delete(catalog_name))
+        Printer.info(self.storage.delete(argument))
 
   def run(self):
     while True:

@@ -4,6 +4,7 @@ catalog_select_guide = [
   ["S", "select a catalog or create if not exists."],
   ["L", "list all catalogs."],
   ["V", "View all catalogs with topics in a table."],
+  ["F", "find values."],
   ["D", "delete a catalog."]
 ]
 
