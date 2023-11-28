@@ -4,7 +4,6 @@ from constants import catalog_select_guide
 from app.services.storage import StorageService
 from app.services.catalog import CatalogService
 from app.output.printer import Printer
-from os import path
 
 class App:
   storage: StorageService = StorageService("catalogize")
@@ -19,7 +18,7 @@ class App:
 
     Printer.guide(catalog_select_guide)
 
-    (action, catalog_name) = Prompt.action()
+    (action, catalog_name) = Prompt.action('')
 
     match action:
       case 's':

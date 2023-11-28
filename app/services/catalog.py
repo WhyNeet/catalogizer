@@ -19,7 +19,7 @@ class CatalogService:
     
     Printer.guide(catalog_menu_guide)
 
-    (action, topic_name) = Prompt.action()
+    (action, topic_name) = Prompt.action(self.catalog.name)
 
     match action:
       case 'c':
@@ -55,7 +55,7 @@ class CatalogService:
   def prompt_topic_action(self):
     Printer.guide(topic_menu_guide)
 
-    (action, value) = Prompt.action()
+    (action, value) = Prompt.action(f'{self.catalog.name}:{self.topic}')
 
     match action:
       case 'c':
