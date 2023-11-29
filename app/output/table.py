@@ -23,14 +23,20 @@ class Table:
             col_len = min(max_len, max(col_len, len(value) + 2))
     
     return col_len
+
+  def cut_value(val: str, max: int) -> str:
+    if len(val) > max:
+      return val[:(max - 5)] + '...'
+    
+    return val
   
-  def headers(data: Data, col_len: int) -> int:
-    headers = '\n'
+  def headers(data: Data, col_len: int) -> str:
+    headers = ''
 
     for header in data:
-      if len(header) > col_len:
-        header = header[:(col_len - 3)] + '...'
-      headers += f'| {Style.BLUE}{header}{" " * (col_len - len(header) - 1)}{Style.END}'
+      header = Table.cut_value(header, col_len)
+      offset = (col_len - len(header))
+      headers += f'|{" " * (offset // 2)}{Style.BLUE}{header}{" " * ((offset // 2) + (col_len - len(header)) % 2)}{Style.END}'
     
     return headers + '|'
   
@@ -42,8 +48,7 @@ class Table:
       for col in self.data:
         if len(self.data[col]) > row:
           value = list(self.data[col])[row]
-          if len(value) > col_len:
-            value = value[:(col_len - 5)] + '...'
+          value = Table.cut_value(value, col_len)
           values += f'| {Style.BOLD}{value}{" " * (col_len - len(value) - 1)}{Style.END}'
         else:
           values += f'|{" " * col_len}'
@@ -59,12 +64,16 @@ class Table:
     col_value_max_len = self.col_max_len()
 
     col_len = Table.col_len(self.data, col_value_max_len)
+    separator = Table.make_separator(self.data, col_len)
+
+    print(separator)
 
     headers = Table.headers(self.data, col_len)
     print(headers)
 
-    separator = Table.make_separator(self.data, col_len)
     print(separator)
 
     values = self.values(col_len)  
-    print(values)
+    print(values, end = '')
+
+    print(separator, end = '\n\n')

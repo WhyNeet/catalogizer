@@ -3,7 +3,7 @@ from app.output.printer import Printer
 
 class Prompt:
   def prompt(path: str) -> str:
-    inp = input(Style.rgb(f"/{path}> ", 0, 0, 160))
+    inp = input(Style.rgb(f"/{path}> ", 0, 0, 160)).strip()
     
     print()
     

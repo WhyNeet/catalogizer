@@ -46,7 +46,7 @@ class App:
           return Printer.info('No catalogs found.')
 
         return Printer.list(catalogs)
-      case 'v':
+      case 't':
         catalog_names = self.storage.list()
         if len(catalog_names) == 0:
           return Printer.info("No catalogs found.")
@@ -87,8 +87,6 @@ class App:
         
         if len(catalogs) == 0:
           return Printer.info('No results.')
-        
-        print(catalogs)
 
         return Printer.table(catalogs)
       case 'd':
@@ -96,6 +94,8 @@ class App:
           return Printer.warn('Catalog name is not provided.')
 
         Printer.info(self.storage.delete(argument))
+      case other:
+        return Printer.warn(f'Unknown command: "{other}"')
 
   def run(self):
     while True:
